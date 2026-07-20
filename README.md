@@ -29,7 +29,20 @@ De app draait daarna op de door Vite getoonde lokale URL.
 | `npm run build` | Typecheck + productiebuild |
 | `npm run preview` | Bekijk de productiebuild lokaal |
 | `npm run lint` | ESLint |
-| `npm run test` | Vitest (unit tests) |
+| `npm run test` | Vitest (unit- en componenttests) |
+
+### Tests
+
+De unit- en componenttests dekken onder meer de balansscore (inclusief
+uitgeschakelde modules en een categorie op nul), weekgemiddelden,
+meetfrequentielogica, de lokale opslag met schemaversie, importvalidatie en de
+inzicht-drempels. Draai ze met `npm run test`.
+
+Een Playwright end-to-end-test is bewust **optioneel** en niet meegeleverd: die
+stap vergt een browserinstallatie en een draaiende dev-server en is daarmee het
+meest breekbaar. De hoofdflow (onboarding → dagregistratie → training voltooien →
+meting toevoegen → grafiek bekijken → export maken) is wel volledig met de hand
+te doorlopen.
 
 ## Techniek
 
