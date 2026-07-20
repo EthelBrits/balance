@@ -88,6 +88,8 @@ export type DailyLog = {
   stress?: StressLevel;
   notes?: string;
   balanceScore?: BalanceScore;
+  /** Gemarkeerd wanneer gegenereerd door demodata. */
+  demo?: boolean;
   createdAt: string;
   updatedAt: string;
 };

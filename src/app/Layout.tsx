@@ -1,9 +1,14 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { NAV_ITEMS } from './navigation';
 import { Logo } from '../components/Logo';
+import { useStore } from '../store/useStore';
+import { useReminders } from '../hooks/useReminders';
 
 /** App-shell: zijbalk op desktop, bottom-navigatie op mobiel. */
 export function Layout() {
+  const settings = useStore((s) => s.settings);
+  useReminders(settings);
+
   return (
     <div className="min-h-screen bg-bg md:flex">
       {/* Zijbalk — desktop */}

@@ -107,3 +107,21 @@ button {
     @apply mb-1.5 block font-heading text-sm font-medium text-text;
   }
 }
+
+/* Printvriendelijk overzicht: verberg navigatie en knoppen. */
+@media print {
+  nav,
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  .card {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #e9e1d3;
+  }
+}
