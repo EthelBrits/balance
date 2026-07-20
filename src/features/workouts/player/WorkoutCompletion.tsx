@@ -30,11 +30,11 @@ export function WorkoutCompletion({ workoutId, defaultDuration, exercises, onDon
 
   const [duration, setDuration] = useState<number | undefined>(defaultDuration || undefined);
   const [effort, setEffort] = useState<'light' | 'moderate' | 'hard'>('moderate');
-  const [energyBefore, setEnergyBefore] = useState<number | undefined>();
   const [energyAfter, setEnergyAfter] = useState<number | undefined>();
   const [pain, setPain] = useState(false);
   const [swelling, setSwelling] = useState(false);
   const [note, setNote] = useState('');
+  const [showMore, setShowMore] = useState(false);
 
   const lymphMode = profile?.limitations.includes('lymphedema') ?? false;
 
@@ -47,14 +47,12 @@ export function WorkoutCompletion({ workoutId, defaultDuration, exercises, onDon
       durationMinutes: duration ?? 0,
       exercises,
       effort,
-      energyBefore,
       energyAfter,
       pain: pain || undefined,
       swellingChange: swelling || undefined,
       note: note.trim() || undefined,
     };
     await saveWorkout(log);
-    // Markeer de dag als training voltooid, zodat de balansscore meetelt.
     await updateDailyLog(date, {
       trainingCompleted: true,
       trainingDurationMinutes: duration,
@@ -71,7 +69,7 @@ export function WorkoutCompletion({ workoutId, defaultDuration, exercises, onDon
       </div>
 
       <div className="max-w-[10rem]">
-        <p className="label-text">Duur</p>
+        <p className="label-text">Duur (uw werkelijke tijd)</p>
         <NumberInput
           ariaLabel="Duur in minuten"
           value={duration}
@@ -83,43 +81,70 @@ export function WorkoutCompletion({ workoutId, defaultDuration, exercises, onDon
       </div>
 
       <div>
-        <p className="label-text">Ervaren zwaarte</p>
-        <OptionRow ariaLabel="Ervaren zwaarte" options={EFFORT_OPTIONS} value={effort} onChange={setEffort} />
+        <p className="label-text">Hoe zwaar voelde het?</p>
+        <OptionRow
+          ariaLabel="Hoe zwaar voelde het"
+          options={EFFORT_OPTIONS}
+          value={effort}
+          onChange={setEffort}
+        />
       </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <p className="label-text">Energie vooraf</p>
-          <OptionRow ariaLabel="Energie vooraf" options={ENERGY_OPTIONS} value={energyBefore} onChange={setEnergyBefore} />
-        </div>
-        <div>
-          <p className="label-text">Energie nadien</p>
-          <OptionRow ariaLabel="Energie nadien" options={ENERGY_OPTIONS} value={energyAfter} onChange={setEnergyAfter} />
-        </div>
-      </div>
-
-      <label className="flex items-center gap-3">
-        <input type="checkbox" className="h-5 w-5 rounded border-sand text-primary" checked={pain} onChange={(e) => setPain(e.target.checked)} />
-        <span className="text-text">Ik had pijn tijdens of na de training.</span>
-      </label>
 
       {lymphMode && (
         <label className="flex items-center gap-3">
-          <input type="checkbox" className="h-5 w-5 rounded border-sand text-primary" checked={swelling} onChange={(e) => setSwelling(e.target.checked)} />
+          <input
+            type="checkbox"
+            className="h-5 w-5 rounded border-sand text-primary"
+            checked={swelling}
+            onChange={(e) => setSwelling(e.target.checked)}
+          />
           <span className="text-text">Ik merkte meer zwelling of een zwaarder gevoel.</span>
         </label>
       )}
 
-      <div>
-        <p className="label-text">Korte notitie (optioneel)</p>
-        <textarea
-          className="input-field"
-          rows={2}
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          placeholder="Hoe ging het?"
-        />
-      </div>
+      <button
+        type="button"
+        className="btn-ghost text-sm"
+        aria-expanded={showMore}
+        onClick={() => setShowMore((s) => !s)}
+      >
+        {showMore ? 'Minder tonen' : 'Meer noteren (optioneel)'}
+      </button>
+
+      {showMore && (
+        <div className="space-y-4">
+          <div>
+            <p className="label-text">Energie na de training (optioneel)</p>
+            <OptionRow
+              ariaLabel="Energie na de training"
+              options={ENERGY_OPTIONS}
+              value={energyAfter}
+              onChange={setEnergyAfter}
+            />
+          </div>
+
+          <label className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              className="h-5 w-5 rounded border-sand text-primary"
+              checked={pain}
+              onChange={(e) => setPain(e.target.checked)}
+            />
+            <span className="text-text">Ik had pijn tijdens of na de training.</span>
+          </label>
+
+          <div>
+            <p className="label-text">Korte notitie (optioneel)</p>
+            <textarea
+              className="input-field"
+              rows={2}
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Hoe ging het?"
+            />
+          </div>
+        </div>
+      )}
 
       <button className="btn-primary w-full" onClick={save}>
         Training opslaan

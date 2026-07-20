@@ -32,6 +32,7 @@ export function WorkoutPlayerPage() {
   const [phase, setPhase] = useState<Phase>(workout?.freeform ? 'freeform' : 'active');
   const [index, setIndex] = useState(0);
   const [seconds, setSeconds] = useState(0);
+  const [totalSeconds, setTotalSeconds] = useState(0);
   const [running, setRunning] = useState(true);
   const [showEasier, setShowEasier] = useState(false);
   const [soundOn, setSoundOn] = useState(false);
@@ -64,7 +65,10 @@ export function WorkoutPlayerPage() {
 
   useEffect(() => {
     if (phase !== 'active' || !running) return;
-    const id = window.setInterval(() => setSeconds((s) => s + 1), 1000);
+    const id = window.setInterval(() => {
+      setSeconds((s) => s + 1);
+      setTotalSeconds((t) => t + 1);
+    }, 1000);
     return () => window.clearInterval(id);
   }, [phase, running]);
 
@@ -215,7 +219,7 @@ export function WorkoutPlayerPage() {
       {phase === 'done' && (
         <WorkoutCompletion
           workoutId={workout.id}
-          defaultDuration={workout.durationMinutes}
+          defaultDuration={workout.freeform ? 0 : Math.max(1, Math.round(totalSeconds / 60))}
           exercises={
             workout.freeform
               ? freeformExercises
