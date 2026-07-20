@@ -13,8 +13,8 @@ import { AppGate } from './AppGate';
 export function App() {
   return (
     <Routes>
-      <Route path="/onboarding" element={<OnboardingPage />} />
       <Route element={<AppGate />}>
+        <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/training/speler/:workoutId" element={<WorkoutPlayerPage />} />
         <Route element={<Layout />}>
           <Route index element={<TodayPage />} />
