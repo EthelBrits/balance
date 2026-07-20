@@ -1,5 +1,5 @@
 import type { DailyLog, ToneType } from '../../types';
-import { computeWeekStats } from './weekOverview';
+import { computeWeekStats } from './weekStats';
 import { weekSummary } from '../../data/copy/tone';
 import { formatShort } from '../../utils/date';
 

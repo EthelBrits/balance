@@ -2,7 +2,7 @@ import { Wine, AlertTriangle, PersonStanding } from 'lucide-react';
 import type { DailyLog, LegFeeling, ToneType } from '../../../types';
 import { LogCard, OptionRow } from './LogCard';
 import { alcoholFeedback } from '../../../data/copy/tone';
-import { countAlcoholFreeDays } from '../weekOverview';
+import { countAlcoholFreeDays } from '../weekStats';
 
 type AlcoholProps = {
   log: DailyLog;

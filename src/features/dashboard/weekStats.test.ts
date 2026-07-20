@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { computeWeekStats, countAlcoholFreeDays } from './weekOverview';
+import { computeWeekStats, countAlcoholFreeDays } from './weekStats';
 import { weekDates } from '../../utils/date';
 import type { BalanceScore, DailyLog } from '../../types';
 
