@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beste recept te wereld voor...</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        background-color: #F1EDDD;
+        color: #787675;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: #F1EDDD;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    h1 {
+        text-align: center;
+        color: #16482F;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
+    h2, h3 {
+        color: #647243;
+    }
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 25px;
+        padding: 18px;
+        background: #9FB29A;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+    button, select, input {
+        padding: 10px 15px;
+        border: 1px solid #B9A8B7;
+        border-radius: 6px;
+        font-size: 0.95em;
+        transition: all 0.2s ease;
+        font-family: 'Poppins', sans-serif;
+    }
+    button {
+        background: #E38B2C;
+        color: white;
+        cursor: pointer;
+        border: none;
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    button:hover {
+        background: #D94F3D;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    button.danger {
+        background: #D94F3D;
+    }
+    button.danger:hover {
+        background: #c03a2a;
+    }
+    .recipe-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+    }
+    .recipe-card {
+        border: 1px solid #B9A8B7;
+        border-radius: 8px;
+        padding: 18px;
+        background: white;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+    }
+    .recipe-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        border-color: #6D505E;
+    }
+    .recipe-card img {
+        max-width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 6px;
+        margin-bottom: 12px;
+    }
+    .recipe-title {
+        font-size: 1.25em;
+        margin: 0 0 12px;
+        color: #16482F;
+        font-weight: 600;
+    }
+    .recipe-labels {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .label {
+        background: #9FB29A;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: 500;
+        color: #16482F;
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    .modal-content {
+        background: #F1EDDD;
+        padding: 25px;
+        border-radius: 10px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        border: 1px solid #6D505E;
+    }
+    .close {
+        float: right;
+        cursor: pointer;
+        font-size: 1.5em;
+        color: #6D505E;
+    }
+    .close:hover {
+        color: #D94F3D;
+    }
+    textarea, input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #B9A8B7;
+        border-radius: 6px;
+        font-family: 'Poppins', sans-serif;
+        background: white;
+    }
+    #grocery-list {
+        margin-top: 30px;
+        padding: 20px;
+        background: #9FB29A;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+    #grocery-items {
+        list-style-type: none;
+        padding: 0;
+    }
+    #grocery-items li {
+        padding: 12px;
+        border-bottom: 1px solid #B9A8B7;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #F1EDDD;
+        margin-bottom: 8px;
+        border-radius: 4px;
+    }
+    .active-tab {
+        background: #647243;
+        color: white;
+    }
+    .tabs {
+        display: flex;
+        margin-bottom: 25px;
+        border-bottom: 1px solid #B9A8B7;
+    }
+    .tab {
+        padding: 12px 24px;
+        cursor: pointer;
+        background: #9FB29A;
+        border: 1px solid #B9A8B7;
+        border-bottom: none;
+        border-radius: 8px 8px 0 0;
+        margin-right: 5px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        color: #16482F;
+    }
+    .tab:hover {
+        background: #B9A8B7;
+    }
+    .tab.active-tab {
+        border-color: #647243;
+        background: #647243;
+        color: white;
+    }
+    .tab-content {
+        display: none;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    .modal-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 25px;
+        flex-wrap: wrap;
+    }
+    .hidden {
+        display: none;
+    }
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #recipe-print-content, #recipe-print-content *,
+    #print-content, #print-content * {
+        visibility: visible;
+    }
+    #recipe-print-content, #print-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 20px;
+        background: white;
+        color: black;
+    }
+    .no-print {
+        display: none !important;
+    }
+    .modal-content {
+        width: 100%;
+        max-width: 100%;
+        box-shadow: none;
+        border: none;
+        position: static;
+    }
+}
+
+/* Alert popups */
+.alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+.alert-box {
+    background: #F1EDDD;
+    padding: 25px;
+    border-radius: 10px;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border: 2px solid #647243;
+    text-align: center;
+}
+.alert-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mijn Recepten Collectie</h1>
+        
+        <div class="tabs">
+            <div class="tab active-tab" onclick="openTab('recipes', event)">Recepten</div>
+            <div class="tab" onclick="openTab('grocery', event)">Boodschappenlijst</div>
+            <div class="tab" onclick="openTab('add', event)">Recept toevoegen</div>
+        </div>
+        
+        <div id="recipes" class="tab-content active">
+            <div class="controls">
+                <input type="text" id="search" placeholder="Zoek recepten..." oninput="filterRecipes()">
+                <select id="filter-category" onchange="filterRecipes()">
+                    <option value="">Alle rubrieken</option>
+                    <option value="aperitief">Aperitief & hapjes</option>
+                    <option value="cocktails">Cocktails & tapjes</option>
+                    <option value="BBQ">BBQ</option>
+                    <option value="salade & lichte lunch">Salade & lichte lunch</option>
+                    <option value="soep">Soep</option>
+                    <option value="pasta & pizza">Pasta & pizza</option>
+                    <option value="stoof">Cury, tajine & stoofschotels</option>
+                    <option value="wrap & burger">Wraps & burgers</option>
+                    <option value="ovenschotel">Ovenschotel</option>
+                    <option value="party">Fancy</option>
+                    <option value="to go">Om mee te nemen</option>
+                    <option value="dessert">Dessert & zoet</option>
+                    <option value="gebak">Gebak, koekjes & brood</option>
+                    <option value="kids">Kidsproof</option>
+                </select>
+                <select id="filter-diet" onchange="filterRecipes()">
+                    <option value="">Alle dieettypes</option>
+                    <option value="vegan">Vegan</option>
+                    <option value="vlees">Vlees</option>
+                    <option value="vis">Vis</option>
+                    <option value="vegetarisch">Vegetarisch</option>
+                    <option value="suikervrij">Zonder toegevoegde suiker</option>
+                    <option value="low-carb">Low-carb</option>
+                </select>
+            </div>
+            
+            <div class="recipe-list" id="recipe-container">
+                <!-- Recepten worden hier dynamisch ingeladen -->
+                <p>Recepten aan het laden...</p>
+            </div>
+        </div>
+        
+        <div id="grocery" class="tab-content">
+            <h2>Boodschappenlijstje</h2>
+            <div class="controls">
+                <input type="text" id="new-grocery-item" placeholder="Voeg item toe">
+                <button onclick="addGroceryItem()">Toevoegen</button>
+                <button onclick="printGroceryList()" class="no-print">Print lijst</button>
+                <button onclick="clearGroceryList()">Lijst leegmaken</button>
+                <button onclick="generateGroceryList()">Genereer lijst van geselecteerde recepten</button>
+            </div>
+            <div id="print-content">
+                <h3>Mijn Boodschappenlijst</h3>
+                <ul id="grocery-items"></ul>
+            </div>
+        </div>
+        
+        <div id="add" class="tab-content">
+            <h2 id="form-title">Nieuw recept toevoegen</h2>
+            <form id="recipe-form">
+                <div>
+                    <label for="recipe-name">Receptnaam:</label>
+                    <input type="text" id="recipe-name" required>
+                </div>
+                
+                <div>
+                    <label for="recipe-category">Rubriek:</label>
+                    <select id="recipe-category" required>
+                    <option value="aperitief">Aperitief & hapjes</option>
+                    <option value="cocktails">Cocktails & tapjes</option>
+                    <option value="BBQ">BBQ</option>
+                    <option value="salade & lichte lunch">Salade & lichte lunch</option>
+                    <option value="soep">Soep</option>
+                    <option value="pasta & pizza">Pasta & pizza</option>
+                    <option value="stoof">Cury, tajine & stoofschotels</option>
+                    <option value="wrap & burger">Wraps & burgers</option>
+                    <option value="ovenschotel">Ovenschotel</option>
+                    <option value="party">Fancy</option>
+                    <option value="to go">Om mee te nemen</option>
+                    <option value="dessert">Dessert & zoet</option>
+                    <option value="gebak">Gebak, koekjes & brood</option>
+                    <option value="kids">Kidsproof</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Dieettype:</label>
+                    <div>
+                        <input type="radio" id="diet-vegan" name="diet" value="vegan">
+                        <label for="diet-vegan">Vegan</label>
+                        
+                        <input type="radio" id="diet-vegetarisch" name="diet" value="vegetarisch">
+                        <label for="diet-vegetarisch">Vegetarisch</label>
+                        
+                        <input type="radio" id="diet-vlees" name="diet" value="vlees">
+                        <label for="diet-vlees">Vlees</label>
+                        
+                        <input type="radio" id="diet-vis" name="diet" value="vis">
+                        <label for="diet-vis">Vis</label>
+
+                        <input type="radio" id="diet-suikervrij" name="diet" value="suikervrij">
+                        <label for="diet-suikervrij">Suikervrij</label>
+                        
+                        <input type="radio" id="diet-low-carb" name="diet" value="low-carb">
+                        <label for="diet-low-carb">Low-carb</label>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="recipe-ingredients">Ingrediënten (één per regel):</label>
+                    <textarea id="recipe-ingredients" rows="5" required></textarea>
+                </div>
+                
+                <div>
+                    <label for="recipe-instructions">Bereidingswijze:</label>
+                    <textarea id="recipe-instructions" rows="5" required></textarea>
+                </div>
+                
+                <div>
+                    <label for="recipe-image">Foto (URL):</label>
+                    <input type="text" id="recipe-image" placeholder="https://voorbeeld.com/foto.jpg">
+                </div>
+                
+                <button type="button" id="save-button" onclick="saveRecipe()">Recept opslaan</button>
+                <button type="button" id="cancel-edit" class="hidden danger" onclick="cancelEdit()">Annuleren</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="recipe-modal" class="modal">
+        <div class="modal-content" id="recipe-print-content">
+            <span class="close no-print" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title"></h2>
+            <div class="recipe-labels" id="modal-labels"></div>
+            <img id="modal-image" src="" alt="" style="max-height: 200px;">
+            <h3>Ingrediënten:</h3>
+            <ul id="modal-ingredients"></ul>
+            <h3>Bereidingswijze:</h3>
+            <div id="modal-instructions"></div>
+            <div class="modal-buttons no-print">
+                <button onclick="addToGroceryList()">Voeg ingrediënten toe aan boodschappenlijst</button>
+                <button onclick="printRecipe()">Print recept</button>
+                <button onclick="editRecipe()">Wijzigen</button>
+                <button class="danger" onclick="deleteRecipe()">Verwijderen</button>
+                <button onclick="closeModal()">Sluiten</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="alert-overlay" class="alert-overlay" style="display: none;">
+        <div class="alert-box">
+            <p id="alert-message">Bericht hier</p>
+            <div class="alert-buttons">
+                <button onclick="hideAlert()">OK</button>
+            </div>
+        </div>
+    </div>
+
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+
+<script>
+  // Firebase configuratie
+  const firebaseConfig = {
+      apiKey: "AIzaSyAylOAmPn6XcuyHCMITI6BS-KAwz0IEiek",
+      authDomain: "beste-recept-ter-wereld-voor.firebaseapp.com",
+      projectId: "beste-recept-ter-wereld-voor",
+      storageBucket: "beste-recept-ter-wereld-voor.appspot.com",
+      messagingSenderId: "1001533058331",
+      appId: "1:1001533058331:web:87f3f1a3c44c4ba3dd37be"
+  };
+
+  // Initialize Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const auth = firebase.auth();
+</script>
+
+<script>
+    // Globale variabelen
+    let recipes = [];
+    let groceryList = [];
+    let currentlyEditing = null;
+    let currentUser = null;
+
+    // Laad de pagina
+    document.addEventListener('DOMContentLoaded', function() {
+        initAuth();
+    });
+
+    // Initialiseer authenticatie
+    function initAuth() {
+        auth.onAuthStateChanged(user => {
+            currentUser = user;
+            if (user) {
+                // Gebruiker is ingelogd
+                init();
+            } else {
+                // Gebruiker is niet ingelogd, toon login scherm
+                showAlert('Je moet inloggen om recepten te beheren. Log in met Google.');
+                // Hier zou je een login knop kunnen toevoegen
+                // Voor nu gaan we door zonder authenticatie voor demo
+                init();
+            }
+        });
+    }
+
+    // Initialisatie
+    function init() {
+        loadSavedGroceryList();
+        loadRecipesFromFirebase();
+    }
+
+    // Tab navigatie
+    function openTab(tabName, event) {
+        const tabs = document.querySelectorAll('.tab-content');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        
+        const tabButtons = document.querySelectorAll('.tab');
+        tabButtons.forEach(button => button.classList.remove('active-tab'));
+        
+        document.getElementById(tabName).classList.add('active');
+        event.currentTarget.classList.add('active-tab');
+    }
+
+    // Laad recepten uit Firebase
+    function loadRecipesFromFirebase() {
+        const container = document.getElementById('recipe-container');
+        container.innerHTML = '<p>Recepten aan het laden...</p>';
+        
+        db.collection("recipes").get()
+            .then((querySnapshot) => {
+                recipes = [];
+                querySnapshot.forEach((doc) => {
+                    const recipe = doc.data();
+                    recipe.id = doc.id; // Voeg het Firebase document ID toe
+                    recipes.push(recipe);
+                });
+                loadRecipes();
+            })
+            .catch((error) => {
+                console.error("Fout bij laden recepten: ", error);
+                container.innerHTML = '<p>Fout bij laden recepten. Probeer het later opnieuw.</p>';
+            });
+    }
+
+    // Laad recepten in de UI
+    function loadRecipes() {
+        const container = document.getElementById('recipe-container');
+        container.innerHTML = '';
+        
+        if (recipes.length === 0) {
+            container.innerHTML = '<p>Nog geen recepten toegevoegd. Voeg je eerste recept toe!</p>';
+            return;
+        }
+        
+        recipes.forEach(recipe => {
+            const card = document.createElement('div');
+            card.className = 'recipe-card';
+            card.onclick = () => openRecipeModal(recipe.id);
+            
+            let html = '';
+            if (recipe.image) {
+                html += `<img src="${recipe.image}" alt="${recipe.name}">`;
+            }
+            html += `<h3 class="recipe-title">${recipe.name}</h3>`;
+            
+            // Labels voor categorie en dieet
+            html += `<div class="recipe-labels">`;
+            html += `<span class="label">${getCategoryLabel(recipe.category)}</span>`;
+            html += `<span class="label">${getDietLabel(recipe.diet)}</span>`;
+            html += `</div>`;
+            
+            card.innerHTML = html;
+            container.appendChild(card);
+        });
+    }
+
+    // Filter recepten op zoekterm, categorie en dieet
+    function filterRecipes() {
+        const searchTerm = document.getElementById('search').value.toLowerCase();
+        const category = document.getElementById('filter-category').value;
+        const diet = document.getElementById('filter-diet').value;
+        
+        const filtered = recipes.filter(recipe => {
+            const matchesSearch = recipe.name.toLowerCase().includes(searchTerm) || 
+                                recipe.ingredients.toLowerCase().includes(searchTerm) || 
+                                recipe.instructions.toLowerCase().includes(searchTerm);
+            const matchesCategory = !category || recipe.category === category;
+            const matchesDiet = !diet || recipe.diet === diet;
+            
+            return matchesSearch && matchesCategory && matchesDiet;
+        });
+        
+        displayFilteredRecipes(filtered);
+    }
+
+    // Toon gefilterde recepten
+    function displayFilteredRecipes(filteredRecipes) {
+        const container = document.getElementById('recipe-container');
+        container.innerHTML = '';
+        
+        if (filteredRecipes.length === 0) {
+            container.innerHTML = '<p>Geen recepten gevonden die aan je criteria voldoen.</p>';
+            return;
+        }
+        
+        filteredRecipes.forEach(recipe => {
+            const card = document.createElement('div');
+            card.className = 'recipe-card';
+            card.onclick = () => openRecipeModal(recipe.id);
+            
+            let html = '';
+            if (recipe.image) {
+                html += `<img src="${recipe.image}" alt="${recipe.name}">`;
+            }
+            html += `<h3 class="recipe-title">${recipe.name}</h3>`;
+            
+            // Labels voor categorie en dieet
+            html += `<div class="recipe-labels">`;
+            html += `<span class="label">${getCategoryLabel(recipe.category)}</span>`;
+            html += `<span class="label">${getDietLabel(recipe.diet)}</span>`;
+            html += `</div>`;
+            
+            card.innerHTML = html;
+            container.appendChild(card);
+        });
+    }
+
+    // Open recept in modal
+    function openRecipeModal(recipeId) {
+        const recipe = recipes.find(r => r.id === recipeId);
+        if (!recipe) return;
+        
+        document.getElementById('modal-title').textContent = recipe.name;
+        document.getElementById('modal-title').setAttribute('data-id', recipe.id);
+        
+        // Labels
+        const labelsContainer = document.getElementById('modal-labels');
+        labelsContainer.innerHTML = '';
+        
+        const categoryLabel = document.createElement('span');
+        categoryLabel.className = 'label';
+        categoryLabel.textContent = getCategoryLabel(recipe.category);
+        labelsContainer.appendChild(categoryLabel);
+        
+        const dietLabel = document.createElement('span');
+        dietLabel.className = 'label';
+        dietLabel.textContent = getDietLabel(recipe.diet);
+        labelsContainer.appendChild(dietLabel);
+        
+        // Afbeelding
+        const img = document.getElementById('modal-image');
+        if (recipe.image) {
+            img.src = recipe.image;
+            img.style.display = 'block';
+        } else {
+            img.style.display = 'none';
+        }
+        
+        // Ingrediënten
+        const ingredientsList = document.getElementById('modal-ingredients');
+        ingredientsList.innerHTML = '';
+        const ingredients = recipe.ingredients.split('\n');
+        ingredients.forEach(ing => {
+            if (ing.trim()) {
+                const li = document.createElement('li');
+                li.textContent = ing;
+                ingredientsList.appendChild(li);
+            }
+        });
+        
+        // Bereidingswijze
+        document.getElementById('modal-instructions').innerHTML = recipe.instructions.replace(/\n/g, '<br>');
+        
+        // Toon modal
+        document.getElementById('recipe-modal').style.display = 'flex';
+    }
+
+    // Sluit modal
+    function closeModal() {
+        document.getElementById('recipe-modal').style.display = 'none';
+    }
+
+    // Print recept
+    function printRecipe() {
+        const printContent = document.getElementById('recipe-print-content').innerHTML;
+        const originalContent = document.body.innerHTML;
+        
+        document.body.innerHTML = printContent;
+        window.print();
+        document.body.innerHTML = originalContent;
+        loadRecipes();
+        loadGroceryList();
+    }
+
+    // Print boodschappenlijst
+    function printGroceryList() {
+        window.print();
+    }
+
+    // Verwijder recept
+    function deleteRecipe() {
+        const recipeId = document.getElementById('modal-title').getAttribute('data-id');
+        
+        showAlert('Weet je zeker dat je dit recept wilt verwijderen?', true)
+            .then(confirmed => {
+                if (confirmed) {
+                    db.collection("recipes").doc(recipeId).delete()
+                        .then(() => {
+                            console.log("Recept succesvol verwijderd");
+                            loadRecipesFromFirebase();
+                            closeModal();
+                        })
+                        .catch((error) => {
+                            console.error("Fout bij verwijderen recept: ", error);
+                            showAlert('Fout bij verwijderen recept. Probeer het opnieuw.');
+                        });
+                }
+            });
+    }
+
+    // Bewerk recept
+    function editRecipe() {
+        const recipeId = document.getElementById('modal-title').getAttribute('data-id');
+        currentlyEditing = recipeId;
+        const recipe = recipes.find(r => r.id === recipeId);
+        
+        // Vul formulier in
+        document.getElementById('recipe-name').value = recipe.name;
+        document.getElementById('recipe-category').value = recipe.category;
+        document.querySelector(`input[name="diet"][value="${recipe.diet}"]`).checked = true;
+        document.getElementById('recipe-ingredients').value = recipe.ingredients;
+        document.getElementById('recipe-instructions').value = recipe.instructions;
+        document.getElementById('recipe-image').value = recipe.image || '';
+        
+        // Pas UI aan voor bewerken
+        document.getElementById('form-title').textContent = 'Recept bewerken';
+        document.getElementById('save-button').textContent = 'Wijzigingen opslaan';
+        document.getElementById('cancel-edit').classList.remove('hidden');
+        
+        closeModal();
+        openTab('add');
+    }
+
+    // Annuleer bewerken
+    function cancelEdit() {
+        currentlyEditing = null;
+        document.getElementById('recipe-form').reset();
+        document.getElementById('form-title').textContent = 'Nieuw recept toevoegen';
+        document.getElementById('save-button').textContent = 'Recept opslaan';
+        document.getElementById('cancel-edit').classList.add('hidden');
+        openTab('recipes');
+    }
+
+    // Sla recept op (nieuw of bewerkt)
+    function saveRecipe() {
+        const name = document.getElementById('recipe-name').value.trim();
+        const category = document.getElementById('recipe-category').value;
+        const diet = document.querySelector('input[name="diet"]:checked').value;
+        const ingredients = document.getElementById('recipe-ingredients').value.trim();
+        const instructions = document.getElementById('recipe-instructions').value.trim();
+        const image = document.getElementById('recipe-image').value.trim();
+        
+        if (!name || !ingredients || !instructions) {
+            showAlert('Vul alle verplichte velden in');
+            return;
+        }
+        
+        const recipeData = {
+            name,
+            category,
+            diet,
+            ingredients,
+            instructions,
+            image: image || null,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        if (currentlyEditing) {
+            // Bestaand recept bijwerken
+            db.collection("recipes").doc(currentlyEditing).update(recipeData)
+                .then(() => {
+                    console.log("Recept succesvol bijgewerkt");
+                    loadRecipesFromFirebase();
+                    cancelEdit();
+                })
+                .catch((error) => {
+                    console.error("Fout bij bijwerken recept: ", error);
+                    showAlert('Fout bij bijwerken recept. Probeer het opnieuw.');
+                });
+        } else {
+            // Nieuw recept toevoegen
+            db.collection("recipes").add(recipeData)
+                .then((docRef) => {
+                    console.log("Recept succesvol toegevoegd met ID: ", docRef.id);
+                    loadRecipesFromFirebase();
+                    cancelEdit();
+                })
+                .catch((error) => {
+                    console.error("Fout bij toevoegen recept: ", error);
+                    showAlert('Fout bij toevoegen recept. Probeer het opnieuw.');
+                });
+        }
+    }
+
+    // Voeg ingrediënten toe aan boodschappenlijst
+    function addToGroceryList() {
+        const recipeId = document.getElementById('modal-title').getAttribute('data-id');
+        const recipe = recipes.find(r => r.id === recipeId);
+        if (!recipe) return;
+        
+        const ingredients = recipe.ingredients.split('\n');
+        ingredients.forEach(ing => {
+            if (ing.trim() && !groceryList.includes(ing.trim())) {
+                groceryList.push(ing.trim());
+            }
+        });
+        
+        saveGroceryList();
+        loadGroceryList();
+        showAlert('Ingrediënten zijn toegevoegd aan je boodschappenlijst!');
+    }
+
+    // Voeg handmatig item toe aan boodschappenlijst
+    function addGroceryItem() {
+        const input = document.getElementById('new-grocery-item');
+        const item = input.value.trim();
+        
+        if (item && !groceryList.includes(item)) {
+            groceryList.push(item);
+            input.value = '';
+            saveGroceryList();
+            loadGroceryList();
+        }
+    }
+
+    // Laad boodschappenlijst in UI
+    function loadGroceryList() {
+        const list = document.getElementById('grocery-items');
+        list.innerHTML = '';
+        
+        groceryList.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `${item} <span onclick="removeGroceryItem(${index})" style="cursor:pointer;color:red;">&times;</span>`;
+            list.appendChild(li);
+        });
+    }
+
+    // Verwijder item van boodschappenlijst
+    function removeGroceryItem(index) {
+        groceryList.splice(index, 1);
+        saveGroceryList();
+        loadGroceryList();
+    }
+
+    // Maak boodschappenlijst leeg
+    function clearGroceryList() {
+        showAlert('Weet je zeker dat je de hele boodschappenlijst wilt leegmaken?', true)
+            .then(confirmed => {
+                if (confirmed) {
+                    groceryList = [];
+                    saveGroceryList();
+                    loadGroceryList();
+                }
+            });
+    }
+
+    // Genereer boodschappenlijst van geselecteerde recepten
+    function generateGroceryList() {
+        showAlert('Wil je ingrediënten van alle recepten toevoegen aan de boodschappenlijst?', true)
+            .then(confirmed => {
+                if (confirmed) {
+                    recipes.forEach(recipe => {
+                        const ingredients = recipe.ingredients.split('\n');
+                        ingredients.forEach(ing => {
+                            if (ing.trim() && !groceryList.includes(ing.trim())) {
+                                groceryList.push(ing.trim());
+                            }
+                        });
+                    });
+                    
+                    saveGroceryList();
+                    loadGroceryList();
+                }
+            });
+    }
+
+    // Sla boodschappenlijst op in localStorage
+    function saveGroceryList() {
+        localStorage.setItem('groceryList', JSON.stringify(groceryList));
+    }
+
+    // Laad boodschappenlijst uit localStorage
+    function loadSavedGroceryList() {
+        const saved = localStorage.getItem('groceryList');
+        if (saved) {
+            groceryList = JSON.parse(saved);
+            loadGroceryList();
+        }
+    }
+
+    // Helper functies voor labels
+    function getCategoryLabel(category) {
+        const labels = {
+            'aperitief': 'Aperitief & hapjes',
+            'cocktails': 'Cocktails & tapjes',
+            'BBQ': 'BBQ',
+            'salade & lichte lunch': 'Salade & lichte lunch',
+            'soep': 'Soep',
+            'pasta & pizza': 'Pasta & pizza',
+            'stoof': 'Curry, tajine & stoofschotels',
+            'wrap & burger': 'Wraps & burgers',
+            'party': 'Fancy',
+            'to go': 'Om mee te nemen',
+            'hoofdgerecht-veg': 'Hoofdgerecht (veg)',
+            'lunch': 'Lichte lunch',
+            'dessert': 'Dessert & zoet',
+            'gebak': 'Gebak, koekjes & brood',
+            'kids': 'Kidsproof'
+        };
+        return labels[category] || category;
+    }
+
+    function getDietLabel(diet) {
+        const labels = {
+            'vegan': 'Vegan',
+            'vegetarisch': 'Vegetarisch',
+            'vlees': 'Met vlees',
+            'vis': 'Met vis',
+            'suikervrij': 'Zonder toegevoegde suiker',
+            'low-carb': 'Low-carb'
+        };
+        return labels[diet] || diet;
+    }
+
+    // Toon alert
+    function showAlert(message, isConfirm = false) {
+        return new Promise((resolve) => {
+            const overlay = document.getElementById('alert-overlay');
+            const messageEl = document.getElementById('alert-message');
+            const buttons = document.querySelector('.alert-buttons');
+            
+            messageEl.textContent = message;
+            
+            if (isConfirm) {
+                buttons.innerHTML = `
+                    <button onclick="hideAlert(true)">Ja</button>
+                    <button onclick="hideAlert(false)">Nee</button>
+                `;
+            } else {
+                buttons.innerHTML = '<button onclick="hideAlert(true)">OK</button>';
+            }
+            
+            overlay.style.display = 'flex';
+            
+            // Return een promise die resolved wanneer de alert wordt gesloten
+            window.hideAlert = (result) => {
+                overlay.style.display = 'none';
+                resolve(result);
+            };
+        });
+    }
+</script>
+</body>
+</html>

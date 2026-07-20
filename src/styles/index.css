@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+   Design tokens — Mijn Balans
+   Kleuren als "R G B" zodat Tailwind's <alpha-value> werkt.
+--------------------------------------------------------------------------- */
+:root {
+  --color-primary: 59 112 99; /* #3B7063 mosgroen */
+  --color-primary-dark: 41 79 71; /* #294F47 */
+  --color-primary-light: 220 233 228; /* #DCE9E4 */
+  --color-bg: 247 245 239; /* #F7F5EF crème */
+  --color-surface: 255 255 255; /* kaarten */
+  --color-sand: 233 225 211; /* #E9E1D3 */
+  --color-accent: 196 123 99; /* #C47B63 terracotta */
+  --color-text: 41 51 48; /* #293330 */
+  --color-text-muted: 104 115 111; /* #68736F */
+  --color-warning: 176 137 74; /* gedempt amber */
+  --color-success: 74 124 96; /* rustig groen */
+
+  --font-scale: 1;
+}
+
+html {
+  font-size: calc(100% * var(--font-scale));
+}
+
+body {
+  margin: 0;
+  background-color: rgb(var(--color-bg));
+  color: rgb(var(--color-text));
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+button {
+  font-family: 'Poppins', system-ui, sans-serif;
+}
+
+/* Zichtbare focus states voor toetsenbordnavigatie */
+:focus-visible {
+  outline: 3px solid rgb(var(--color-primary));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Respecteer prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-card bg-surface p-5 shadow-card;
+  }
+
+  /* Minimale raakvlakken 44x44px */
+  .tap-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  .btn-primary {
+    @apply tap-target inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3
+      font-heading font-semibold text-white transition-colors hover:bg-primary-dark
+      focus-visible:outline-primary-dark disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply tap-target inline-flex items-center justify-center gap-2 rounded-full border border-primary/40
+      bg-transparent px-6 py-3 font-heading font-medium text-primary-dark transition-colors
+      hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-ghost {
+    @apply tap-target inline-flex items-center justify-center gap-2 rounded-full px-4 py-2
+      font-heading text-text-muted transition-colors hover:bg-sand;
+  }
+
+  .chip {
+    @apply tap-target inline-flex items-center justify-center gap-1.5 rounded-full border border-sand
+      bg-surface px-4 py-2 text-sm font-medium text-text transition-colors;
+  }
+
+  .chip-active {
+    @apply border-primary bg-primary-light text-primary-dark;
+  }
+
+  .input-field {
+    @apply w-full rounded-xl border border-sand bg-surface px-4 py-3 text-text
+      placeholder:text-text-muted focus:border-primary focus:outline-none;
+  }
+
+  .label-text {
+    @apply mb-1.5 block font-heading text-sm font-medium text-text;
+  }
+}
